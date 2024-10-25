@@ -1,112 +1,154 @@
 ﻿namespace EscapeRoom
 {
-    class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
-            string playerName;
+            
+            Console.WriteLine("Приветствую! Как тебя зовут?");
+            string playerName = Console.ReadLine();
 
-            // 1. Запрос имени игрока
-            Console.WriteLine("Добро пожаловать в Escape Room!");
-            Console.WriteLine("Вы просыпаетесь в неизвестной комнате и пытаетесь вспомнить своё имя");
-            Console.Write("Введите свое имя: ");
-            playerName = Console.ReadLine();
-            Console.WriteLine("Вы решаете осмотреть комнату и видите разнообразные предметы интерьера. Величественную статую рядом с дверью с разъёмами под три предмета, ящик в углу комнаты, хлипкую вентиляцию на одной из стен комнаты которую при желании можно сорвать , кровать из под которой что-то поблёскивает и тумбочку около неё на которой что-то лежит ");
+           
+            Console.WriteLine($"\n{playerName}, ты просыпаешься в комнате и пытаешься вспомнить свое имя. " +
+                              "Ты видишь перед собой несколько объектов: " +
+                              "дверь, кровать, ящик в углу, вентиляция, тумбочка, статуя рядом с дверью." +
+                              "Что ты хочешь сделать?");
 
-            // 2. Цикл
-            bool escaped = false;
+          
             bool hasKey = false;
-            bool hasLockpick = false;
-            int ventilationAttempts = 0;
-            bool[] artifactsFound = new bool[3];
+            bool hasKeyStorage = false;
+            bool hasArtifact1 = false;
+            bool hasArtifact2 = false;
+            bool hasArtifact3 = false;
+            bool openedVentilation = false;
 
-            while (!escaped)
+           
+            while (true)
             {
-                Console.WriteLine("\nЧто вы хотите сделать?");
+               
+                Console.WriteLine("\nВыбери действие (введи номер):");
                 Console.WriteLine("1. Открыть дверь");
                 Console.WriteLine("2. Заглянуть под кровать");
-                Console.WriteLine("3. Открыть ящик в углу комнаты");
+                Console.WriteLine("3. Открыть ящик в углу");
                 Console.WriteLine("4. Открыть вентиляцию");
                 Console.WriteLine("5. Взглянуть на тумбочку");
-                Console.WriteLine("6. Взглянуть на статую рядом с дверью");
+                Console.WriteLine("6. Взглянуть на статую");
 
-                int choice = Convert.ToInt32(Console.ReadLine());
+                int choice = int.Parse(Console.ReadLine());
 
-                // 3. Действия
                 switch (choice)
                 {
-                    case 1: // Открыть дверь
-                        if (hasLockpick)
+                    case 1: 
+                        if (hasKeyStorage)
                         {
-                            Console.WriteLine($"{playerName}, вы открыли дверь и сбежали из неизвестной комнаты!");
-                            escaped = true;
+                            Console.WriteLine("\nТы открываешь дверь ключом и выбегаешь на свободу! " +
+                                              "Поздравляю, ты сбежал!");
+                            return; 
                         }
                         else
                         {
-                            Console.WriteLine($"{playerName}, вам нужна отмычка , чтобы взломать замок.");
+                            Console.WriteLine("\nДверь заперта. Тебе нужен ключ.");
                         }
                         break;
 
-                    case 2: // Заглянуть под кровать
-                        if (!artifactsFound[0])
+                    case 2: 
+                        if (!hasArtifact1)
                         {
-                            Console.WriteLine($"{playerName}, вы нашли первый артефакт!");
-                            artifactsFound[0] = true;
+                            Console.WriteLine($"\n{playerName}, ты нашел первый артефакт!");
+                            hasArtifact1 = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nПод кроватью ничего интересного нет.");
                         }
                         break;
 
-                    case 3: // Открыть ящик
+                    case 3: 
                         if (hasKey)
                         {
-                            Console.WriteLine($"{playerName}, вы открыли ящик.");
-                            hasLockpick = true;
-                            Console.WriteLine($"{playerName}, вы нашли отмычку!");
+                            if (!hasKeyStorage)
+                            {
+                                Console.WriteLine($"\n{playerName}, ты нашел ключ от двери!");
+                                hasKeyStorage = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nВ ящике больше ничего нет.");
+                            }
                         }
                         else
                         {
-                            Console.WriteLine($"{playerName}, вам нужен ключ от ящика.");
+                            Console.WriteLine("\nЯщик заперт. Тебе нужен ключ.");
                         }
                         break;
 
-                    case 4: // Открыть вентиляцию
-                        ventilationAttempts++;
-                        if (ventilationAttempts == 3 && !artifactsFound[1])
+                    case 4: 
+                        if (!openedVentilation)
                         {
-                            Console.WriteLine($"{playerName}, вы нашли второй артефакт!");
-                            artifactsFound[1] = true;
+                            openedVentilation = true;
+                            Console.WriteLine("\nТы пытаешься открыть вентиляцию...");
+                            if (hasArtifact2)
+                            {
+                                Console.WriteLine($"\n{playerName}, ты нашел второй артефакт!");
+                                hasArtifact2 = true;
+                            }
+                            else
+                            {
+                                openedVentilation = true;
+                                Console.WriteLine("\nВентиляция закрыта. Попробуй еще раз.");
+                            }
+                        }
+                        else
+                        {
+                            if (!hasArtifact2)
+                            {
+                                Console.WriteLine($"\n{playerName}, спустя три попытки открыть вентиляцию, ты нашел второй артефакт!");
+                                hasArtifact2 = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nВентиляция пуста.");
+                            }
                         }
                         break;
 
-                    case 5: // Взглянуть на тумбочку
-                        if (!artifactsFound[2])
+                    case 5: 
+                        if (!hasArtifact3)
                         {
-                            Console.WriteLine($"{playerName}, вы нашли третий артефакт!");
-                            artifactsFound[2] = true;
+                            Console.WriteLine($"\n{playerName}, ты нашел третий артефакт!");
+                            hasArtifact3 = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nНа тумбочке ничего интересного нет.");
                         }
                         break;
 
-                    case 6: // Взглянуть на статую
-                        if (artifactsFound[0] && artifactsFound[1] && artifactsFound[2])
+                    case 6: 
+                        if (hasArtifact1 && hasArtifact2 && hasArtifact3)
                         {
-                            Console.WriteLine($"{playerName}, вы активировали статую и получили ключ!");
-                            hasKey = true;
+                            if (!hasKey)
+                            {
+                                Console.WriteLine($"\n{playerName}, ты активировал статую и получил ключ от ящика!");
+                                hasKey = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nСтатуя уже активирована.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nСтатуя выглядит странно. " +
+                                              "Возможно, ее можно активировать чем-то.");
                         }
                         break;
 
                     default:
-                        Console.WriteLine("Неверный выбор.");
+                        Console.WriteLine("\nНеверный выбор. Попробуй еще раз.");
                         break;
                 }
             }
-
-            Console.WriteLine("Вы успешно сбежали. Поздравляю!");
-            Console.ReadKey();
         }
     }
 }
-
-
-
-
-
-  
